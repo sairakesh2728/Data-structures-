@@ -1,0 +1,189 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for an AVL tree node
+typedef struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+    int height;
+} Node;
+
+// Function to create a new AVL tree node
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    newNode->height = 1;
+    return newNode;
+}
+
+// Function to calculate the height of a node
+int height(Node* node) {
+    if (!node) {
+        return 0;
+    }
+    return node->height;
+}
+
+// Function to update the height of a node
+void updateHeight(Node* node) {
+    node->height = 1 + ((height(node->left) > height(node->right)) ? height(node->left) : height(node->right));
+}
+
+// Function to get the balance factor of a node
+int getBalance(Node* node) {
+    if (!node) {
+        return 0;
+    }
+    return height(node->left) - height(node->right);
+}
+
+// Function to perform left rotation
+Node* leftRotate(Node* z) {
+    Node* y = z->right;
+    Node* T2 = y->left;
+    y->left = z;
+    z->right = T2;
+    updateHeight(z);
+    updateHeight(y);
+    return y;
+}
+
+// Function to perform right rotation
+Node* rightRotate(Node* y) {
+    Node* x = y->left;
+    Node* T2 = x->right;
+    x->right = y;
+    y->left = T2;
+    updateHeight(y);
+    updateHeight(x);
+    return x;
+}
+
+// Function to perform AVL tree insertion
+Node* insertNode(Node* node, int data) {
+    if (!node) {
+        return createNode(data);
+    }
+    if (data < node->data) {
+        node->left = insertNode(node->left, data);
+    } else if (data > node->data) {
+        node->right = insertNode(node->right, data);
+    } else {
+        return node;
+    }
+    updateHeight(node);
+    int balance = getBalance(node);
+    if (balance > 1 && data < node->left->data) {
+        return rightRotate(node);
+    }
+    if (balance < -1 && data > node->right->data) {
+        return leftRotate(node);
+    }
+    if (balance > 1 && data > node->left->data) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+    if (balance < -1 && data < node->right->data) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+    return node;
+}
+
+// Function to perform AVL tree deletion
+Node* deleteNode(Node* node, int data) {
+    if (!node) {
+        return node;
+    }
+    if (data < node->data) {
+        node->left = deleteNode(node->left, data);
+    } else if (data > node->data) {
+        node->right = deleteNode(node->right, data);
+    } else {
+        if (!node->left && !node->right) {
+            free(node);
+            return NULL;
+        }
+        if (!node->left) {
+            Node* temp = node->right;
+            free(node);
+            return temp;
+        }
+        if (!node->right) {
+            Node* temp = node->left;
+            free(node);
+            return temp;
+        }
+        Node* temp = minValueNode(node->right);
+        node->data = temp->data;
+        node->right = deleteNode(node->right, temp->data);
+    }
+    if (!node) {
+        return node;
+    }
+    updateHeight(node);
+    int balance = getBalance(node);
+    if (balance > 1 && getBalance(node->left) >= 0) {
+        return rightRotate(node);
+    }
+    if (balance > 1 && getBalance(node->left) < 0) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+    if (balance < -1 && getBalance(node->right) <= 0) {
+        return leftRotate(node);
+    }
+    if (balance < -1 && getBalance(node->right) > 0) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+    return node;
+}
+
+// Function to find the minimum value node
+Node* minValueNode(Node* node) {
+    Node* current = node;
+    while (current && current->left) {
+        current = current->left;
+    }
+    return current;
+}
+
+// Function to search for a key in the AVL tree
+int searchNode(Node* node, int key) {
+    if (!node) {
+        return 0;
+    }
+    if (key < node->data) {
+        return searchNode(node->left, key);
+    } else if (key > node->data) {
+        return searchNode(node->right, key);
+    } else {
+        return 1;
+    }
+}
+
+int main() {
+    Node* root = NULL;
+    root = insertNode(root, 5);
+    root = insertNode(root, 3);
+    root = insertNode(root, 7);
+    root = insertNode(root, 2);
+    root = insertNode(root, 4);
+    root = insertNode(root, 6);
+    root = insertNode(root, 8);
+
+    printf("Searching for 5: %d\n", searchNode(root, 5));
+    printf("Searching for 20: %d\n", searchNode(root, 20));
+
+    root = deleteNode(root, 3);
+    printf("Searching for 3: %d\n", searchNode(root, 3));
+
+    return 0;
+}
