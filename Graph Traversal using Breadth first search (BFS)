@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define V 6
+
+void BFS(int graph[V][V], int start) {
+    int visited[V];
+    int queue[V];
+    int front = 0, rear = 0;
+    int i;
+
+    for (i = 0; i < V; i++) {
+        visited[i] = 0;
+    }
+
+    queue[rear++] = start;
+    visited[start] = 1;
+
+    while (front != rear) {
+        int node = queue[front++];
+        printf("%d ", node);
+
+        for (i = 0; i < V; i++) {
+            if (graph[node][i] && !visited[i]) {
+                queue[rear++] = i;
+                visited[i] = 1;
+            }
+        }
+    }
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 1, 1, 0, 0, 0},
+        {1,
