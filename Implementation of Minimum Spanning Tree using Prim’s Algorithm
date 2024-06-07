@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define V 6
+
+void prim(int graph[V][V]) {
+    int min, u, v;
+    int visited[V];
+    int parent[V];
+    int i, j;
+
+    for (i = 0; i < V; i++) {
+        visited[i] = 0;
+    }
+
+    parent[0] = -1;
+    visited[0] = 1;
+
+    for (i = 1; i < V; i++) {
+        min = INT_MAX;
+        u = -1;
+        for (j = 0; j < V; j++) {
+            if (!visited[j] && graph[j][0] < min) {
+                min = graph[j][0];
+                u = j;
+            }
+        }
+
+        visited[u] = 1;
+        parent[u] = 0;
+
+        for (j = 0; j < V; j++) {
+            if (!visited[j] && graph[u][j] != 0) {
+                printf("Edge (%d, %d) with weight %d\n", u, j, graph[u][j]);
+            }
+        }
+    }
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 2, 0, 6, 0, 0},
+        {2, 0, 3, 8, 5, 0},
+        {0, 3, 0, 0, 7, 1},
+        {6, 8, 0, 0, 0, 2},
+        {0, 5, 7, 0, 0, 3},
+        {0, 0, 1, 2, 3, 0}
+    };
+
+    prim(graph);
+
+    return 0;
+}
