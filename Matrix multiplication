@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+#define MAX_ROWS 100
+#define MAX_COLS 100
+
+int main() {
+    int A[MAX_ROWS][MAX_COLS], B[MAX_ROWS][MAX_COLS], C[MAX_ROWS][MAX_COLS];
+    int rows_a, cols_a, rows_b, cols_b;
+    int i, j, k;
+
+    // Get dimensions of matrix A
+    printf("Enter the number of rows and columns for matrix A: ");
+    scanf("%d %d", &rows_a, &cols_a);
+
+    // Get dimensions of matrix B
+    printf("Enter the number of rows and columns for matrix B: ");
+    scanf("%d %d", &rows_b, &cols_b);
+
+    // Check if multiplication is possible
+    if (cols_a != rows_b) {
+        printf("Error: Number of columns in A must be equal to number of rows in B.\n");
+        return 1;
+    }
+
+    // Get elements of matrix A
+    printf("Enter the elements of matrix A:\n");
+    for (i = 0; i < rows_a; i++) {
+        for (j = 0; j < cols_a; j++) {
+            scanf("%d", &A[i][j]);
+        }
+    }
+
+    // Get elements of matrix B
+    printf("Enter the elements of matrix B:\n");
+    for (i = 0; i < rows_b; i++) {
+        for (j = 0; j < cols_b; j++) {
+            scanf("%d", &B[i][j]);
+        }
+    }
+
+    // Perform matrix
