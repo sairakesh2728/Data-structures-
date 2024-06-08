@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void insert(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void delete(struct Node** head, int data) {
+    struct Node* current = *head;
+    struct Node* prev = NULL;
+
+    // If the head node itself holds the key to be deleted
+    if (current != NULL && current->data == data) {
+        *head = current->next;
+        free(current);
+        return;
+    }
+
+    // Search for the key to be deleted, keep track of the previous node
+    while (current != NULL && current->data != data) {
+        prev = current;
+        current = current->next;
+    }
+
+    // If key was not present in linked list
+    if (current == NULL) {
+        return;
+    }
+
+    // Unlink the node from linked list
+    prev->next = current->next;
+    free(current);
+}
+
+void display(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insert(&head, 10);
+    insert(&head, 20);
+    insert(&head, 30);
+
+    printf("Linked List: ");
+    display(head);
+
+    delete(&head, 20);
+
+    printf("Linked List after deletion: ");
+    display(head);
+
+    return 0;
+}
